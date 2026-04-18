@@ -1,4 +1,4 @@
-const API = "http://localhost:3000/api";
+const API = "https://agile-clb-event-management-system.onrender.com";
 async function sendEmail(email, qrCode) {
     try {
         const res = await fetch(API + "/send-email", {
