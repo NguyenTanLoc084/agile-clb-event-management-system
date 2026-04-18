@@ -113,7 +113,7 @@ async function check() {
         btn.disabled = true;
         updateMsg("⏳ Đang xử lý...", "text-muted");
 
-        const res = await fetch("http://localhost:3000/api/check-ticket", {
+        const res = await fetch("https://agile-clb-event-management-system.onrender.com/check-ticket", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ code })
