@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api";
+const API_URL = "https://agile-clb-event-management-system.onrender.com";
 
 async function request(endpoint, method = "GET", body = null) {
     try {
