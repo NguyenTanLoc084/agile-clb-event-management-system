@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Hệ Thống Quản Lý Sự Kiện</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-grad: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            background: var(--primary-grad);
+            background-attachment: fixed;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            color: white;
+            margin: 0;
+        }
+
+        .hero-section {
+            margin-bottom: 60px;
+        }
+
+        .hero-section h1 {
+            text-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            letter-spacing: -1px;
+        }
+
+        .hero-section p {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .portal-card {
+            border: none;
+            border-radius: 30px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            text-decoration: none !important;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .portal-card:hover {
+            transform: translateY(-20px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3) !important;
+            background: #ffffff;
+        }
+
+        .icon-box {
+            width: 85px;
+            height: 85px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            margin: 0 auto 25px;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        .card-student .icon-box { background: #eef2ff; color: #4361ee; }
+        .card-admin .icon-box { background: #fff5f5; color: #e03131; }
+        .card-checkin .icon-box { background: #ebfbee; color: #099268; }
+
+        .portal-card h4 {
+            color: #1e293b;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .portal-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .action-link {
+            margin-top: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .bg-bubbles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -100px;
+            animation: rise 20s infinite linear;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-bubbles">
+    <div class="bubble" style="width: 80px; height: 80px; left: 10%; animation-duration: 25s;"></div>
+    <div class="bubble" style="width: 150px; height: 150px; left: 20%; animation-delay: 2s;"></div>
+    <div class="bubble" style="width: 40px; height: 40px; left: 35%; animation-duration: 15s;"></div>
+    <div class="bubble" style="width: 100px; height: 100px; left: 70%; animation-delay: 5s;"></div>
+    <div class="bubble" style="width: 120px; height: 120px; left: 85%; animation-duration: 22s;"></div>
+</div>
+
+<div class="container py-5">
+    <div class="hero-section text-center">
+        <h1 class="display-3 fw-bold">Hệ Thống Sự Kiện</h1>
+        <p class="lead fw-light">Nền tảng quản lý và điểm danh thông minh thế hệ mới</p>
+    </div>
+
+    <div class="row g-5 justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <a href="student/student.html" class="portal-card card-student p-5 text-center shadow-lg">
+                <div class="icon-box">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h4>Sinh viên</h4>
+                <p>Khám phá các sự kiện hấp dẫn và đăng ký nhận vé QR tham gia ngay.</p>
+                <div class="action-link text-primary">Vào cổng <i class="fas fa-chevron-right ms-1"></i></div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="admin/login.html" class="portal-card card-admin p-5 text-center shadow-lg">
+                <div class="icon-box">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h4>Ban tổ chức</h4>
+                <p>Quản lý toàn diện sự kiện, dữ liệu người tham gia và trích xuất báo cáo.</p>
+                <div class="action-link text-danger">Quản trị <i class="fas fa-lock ms-1"></i></div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="checkin/mobile.html" class="portal-card card-checkin p-5 text-center shadow-lg">
+                <div class="icon-box">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h4>Soát vé QR</h4>
+                <p>Giao diện quét mã tốc độ cao dành cho nhân viên điểm danh tại lối vào.</p>
+                <div class="action-link text-success">Mở Checkin <i class="fas fa-camera ms-1"></i></div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
