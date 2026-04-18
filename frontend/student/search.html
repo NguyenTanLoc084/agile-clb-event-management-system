@@ -86,7 +86,7 @@ const infoElement = document.getElementById("search-info");
 
 async function loadData() {
     try {
-        const res = await fetch("http://localhost:3000/api/participants");
+        const res = await fetch("https://agile-clb-event-management-system.onrender.com/participants");
         participants = await res.json();
         infoElement.innerText = `Đã sẵn sàng tìm kiếm trên ${participants.length} người tham gia.`;
     } catch (err) {
