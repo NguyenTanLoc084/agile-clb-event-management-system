@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 app.use(cors({
-    origin: 'https://agile-clb-event-management-system.vercel.app',
+    origin: 'agile-clb-event-management-system.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
