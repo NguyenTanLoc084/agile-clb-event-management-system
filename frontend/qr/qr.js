@@ -1,4 +1,4 @@
-const API = "http://localhost:3000/api";
+const API = "https://agile-clb-event-management-system.onrender.com";
 async function generateQR() {
     const emailInput = document.getElementById("email");
     const eventInput = document.getElementById("eventId");
