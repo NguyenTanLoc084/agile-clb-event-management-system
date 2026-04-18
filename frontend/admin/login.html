@@ -1,0 +1,181 @@
+<!-- ===== SCRUM-18: ADMIN LOGIN ===== -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập quản trị - Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none !important;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        .btn-back-home:hover {
+            background-color: rgba(255, 255, 255, 1);
+            color: #764ba2;
+            transform: translateX(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .login-card {
+            background: white;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            z-index: 1;
+        }
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #4e73df;
+        }
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 15px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        .form-control:focus {
+            background: white;
+            box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
+            border-color: #4e73df;
+        }
+        .btn-login {
+            background: #4e73df;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-login:hover {
+            background: #224abe;
+            transform: translateY(-2px);
+        }
+        .input-group-text {
+            border-radius: 12px 0 0 12px;
+        }
+        .form-control.border-start-0 {
+            border-radius: 0 12px 12px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<a href="../index.html" class="btn-back-home">
+    <i class="fas fa-home me-2"></i> Trang chủ
+</a>
+
+<div class="login-card">
+    <div class="text-center">
+        <div class="login-icon">
+            <i class="fas fa-user-shield fa-2x"></i>
+        </div>
+        <h4 class="fw-bold mb-1">Chào mừng trở lại</h4>
+        <p class="text-muted small mb-4">Vui lòng đăng nhập để tiếp tục quản trị</p>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label small fw-bold">Tên đăng nhập</label>
+        <div class="input-group">
+            <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="fas fa-user"></i></span>
+            <input id="username" class="form-control border-start-0" placeholder="admin_user">
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label small fw-bold">Mật khẩu</label>
+        <div class="input-group">
+            <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="fas fa-lock"></i></span>
+            <input id="password" type="password" class="form-control border-start-0" placeholder="••••••••">
+        </div>
+    </div>
+    <div class="text-center">
+    <a href="forgot-password.html" class="text-decoration-none small text-muted">Quên mật khẩu?</a>
+</div>
+
+    <button class="btn btn-primary w-100 btn-login mb-3" onclick="login()">
+        Đăng nhập ngay
+    </button>
+</div>
+
+<script>
+async function login() {
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    
+    if (!usernameInput.value || !passwordInput.value) {
+        alert("Vui lòng điền đầy đủ thông tin!");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:3000/api/login", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ 
+                username: usernameInput.value, 
+                password: passwordInput.value 
+            })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+            localStorage.setItem("token", data.token);
+            window.location.href = "dashboard.html";
+        } else {
+            alert(data.error || "Sai tài khoản hoặc mật khẩu!");
+        }
+    } catch (err) {
+        console.error("Lỗi đăng nhập:", err);
+        alert("Không thể kết nối đến máy chủ!");
+    }
+}
+
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        login();
+    }
+});
+</script>
+
+</body>
+</html>

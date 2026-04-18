@@ -1,0 +1,152 @@
+<!-- ===== EDIT EVENT (SCRUM-16) ===== -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa sự kiện - Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="../assets/css/admin-style.css">
+</head>
+
+<body>
+<div class="admin-wrapper">
+    <div class="sidebar shadow">
+        <div class="sidebar-header">
+            <h5 class="mb-0 text-white"><i class="fas fa-user-shield me-2"></i>ADMIN PANEL</h5>
+        </div>
+        <div class="py-3">
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="event-manager.html" class="active"><i class="fas fa-calendar-alt"></i> Quản lý sự kiện</a>
+            <a href="create-event.html"><i class="fas fa-plus-circle"></i> Tạo sự kiện mới</a>
+            <a href="participants.html"><i class="fas fa-users"></i> Người tham gia</a>
+            <hr class="bg-secondary mx-3">
+            <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+            <a href="login.html" class="text-warning"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-light bg-white border-bottom mb-4 p-2 rounded-3 shadow-sm">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" style="font-size: 1.1rem;">
+                    Hệ thống / Quản lý sự kiện / <strong id="page-title">Chỉnh sửa</strong>
+                </span>
+            </div>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 p-4 rounded-4 bg-white">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-light-primary p-3 rounded-3 me-3" style="background-color: #eef2ff;">
+                            <i class="fas fa-edit fa-lg text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0">Cập nhật thông tin sự kiện</h4>
+                            <p class="text-muted small mb-0">Thay đổi các thông tin cần thiết và nhấn lưu</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold">Tên sự kiện</label>
+                            <input id="name" class="form-control bg-light border-0 py-2" placeholder="Tên sự kiện">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Thời gian tổ chức</label>
+                            <input id="time" type="datetime-local" class="form-control bg-light border-0 py-2">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Địa điểm</label>
+                            <input id="location" class="form-control bg-light border-0 py-2" placeholder="Địa điểm">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold">Mô tả chi tiết</label>
+                            <textarea id="desc" class="form-control bg-light border-0" rows="5" placeholder="Nội dung mô tả..."></textarea>
+                        </div>
+
+                        <div class="col-md-12 mt-4 d-flex gap-2">
+                            <button class="btn btn-primary px-4 py-2 fw-bold rounded-3 shadow-sm" onclick="updateEvent()">
+                                <i class="fas fa-save me-2"></i> Lưu thay đổi
+                            </button>
+                            <button class="btn btn-outline-secondary px-4 py-2 rounded-3" onclick="window.location.href='event-manager.html'">
+                                Quay lại
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+
+<script>
+const API = "http://localhost:3000/api";
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+async function loadEvent() {
+    try {
+        const res = await fetch(API + "/events");
+        const data = await res.json();
+        const event = data.find(e => e.id === id);
+
+        if (!event) {
+            alert("Không tìm thấy sự kiện!");
+            window.location.href = "event-manager.html";
+            return;
+        }
+
+        document.getElementById("name").value = event.name;
+        document.getElementById("time").value = event.time;
+        document.getElementById("location").value = event.location;
+        document.getElementById("desc").value = event.description || "";
+    } catch (err) {
+        console.error("Lỗi khi tải thông tin:", err);
+    }
+}
+
+async function updateEvent() {
+    const name = document.getElementById("name").value;
+    const time = document.getElementById("time").value;
+    const location = document.getElementById("location").value;
+    const description = document.getElementById("desc").value;
+
+    if (!name || !time) {
+        alert("Vui lòng không để trống tên và thời gian!");
+        return;
+    }
+
+    try {
+        const res = await fetch(API + "/events/" + id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, time, location, description })
+        });
+
+        if (res.ok) {
+            alert("✅ Cập nhật thành công!");
+            window.location.href = "event-manager.html";
+        } else {
+            alert("❌ Có lỗi xảy ra khi cập nhật.");
+        }
+    } catch (err) {
+        alert("Lỗi kết nối server!");
+    }
+}
+
+window.onload = loadEvent;
+</script>
+
+</body>
+</html>
