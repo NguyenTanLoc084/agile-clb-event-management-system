@@ -1,6 +1,6 @@
 // ===== CHECKIN.JS (OPTIMIZED) =====
 
-const API = "http://localhost:3000/api";
+const API = "https://agile-clb-event-management-system.onrender.com";
 
 async function check() {
     const input = document.getElementById("code");
