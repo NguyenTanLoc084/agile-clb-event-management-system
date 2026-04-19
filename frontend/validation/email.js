@@ -1,4 +1,4 @@
-const API = "http://localhost:3000/api";
+const API = "/api";
 async function sendEmail(email, qrCode) {
     try {
         const res = await fetch(API + "/send-email", {
