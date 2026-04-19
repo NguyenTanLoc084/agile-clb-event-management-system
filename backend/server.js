@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -14,11 +15,21 @@ app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/participants', require('./routes/participantRoutes'));
 app.use('/api/student', require('./routes/studentRoutes'));
 
-const PORT = 3000;
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log('--------------------------------------------------');
     console.log(`🚀 Server đang chạy tại: http://localhost:${PORT}`);
-    console.log(`🔐 API Auth: http://localhost:${PORT}/api/auth/login`);
-    console.log(`📧 API Quên mật khẩu: http://localhost:${PORT}/api/auth/send-otp`);
+    console.log(`🌍 Deploy URL sẽ là: https://your-app.onrender.com`);
     console.log('--------------------------------------------------');
 });
