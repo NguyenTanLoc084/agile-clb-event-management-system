@@ -7,5 +7,5 @@ function loadComponent(id, path) {
         })
         .catch(err => console.error("❌ Load lỗi:", err));
 }
-loadComponent("navbar", "../components/navbar.html");
-loadComponent("sidebar", "../components/sidebar.html");
+loadComponent("navbar", "/components/navbar.html");
+loadComponent("sidebar", "/components/sidebar.html");
