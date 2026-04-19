@@ -1,6 +1,6 @@
 // ===== CHECKIN.JS (OPTIMIZED) =====
 
-const API = "http://localhost:3000/api";
+const API = "/api";
 
 async function check() {
     const input = document.getElementById("code");
