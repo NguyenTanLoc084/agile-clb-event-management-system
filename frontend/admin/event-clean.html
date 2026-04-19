@@ -1,0 +1,179 @@
+<!-- ===== SCRUM-17: EVENT CLEAN (ẨN / XÓA) ===== -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dọn dẹp sự kiện - Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="../assets/css/admin-style.css">
+</head>
+
+<body>
+<div class="admin-wrapper">
+    <div class="sidebar shadow">
+        <div class="sidebar-header">
+            <h5 class="mb-0 text-white"><i class="fas fa-user-shield me-2"></i>ADMIN PANEL</h5>
+        </div>
+        <div class="py-3">
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="event-manager.html" class="active"><i class="fas fa-calendar-alt"></i> Quản lý sự kiện</a>
+            <a href="create-event.html"><i class="fas fa-plus-circle"></i> Tạo sự kiện mới</a>
+            <a href="participants.html"><i class="fas fa-users"></i> Người tham gia</a>
+            <hr class="bg-secondary mx-3">
+            <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+            <a href="login.html" class="text-warning"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-light bg-white border-bottom mb-4 p-2 rounded-3 shadow-sm">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" style="font-size: 1.1rem;">
+                    Hệ thống / <strong id="page-title">Dọn dẹp sự kiện</strong>
+                </span>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-0">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold text-danger mb-1">🛠 Dọn dẹp hệ thống</h3>
+                    <p class="text-muted small">Ẩn các sự kiện cũ hoặc xóa vĩnh viễn khỏi cơ sở dữ liệu</p>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" onclick="loadEvents()">
+                    <i class="fas fa-sync"></i> Làm mới
+                </button>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Tên sự kiện</th>
+                                <th>Địa điểm</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th class="text-end pe-4">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+
+<script>
+const API = "http://localhost:3000/api/events";
+
+async function loadEvents() {
+    try {
+        const res = await fetch(API + "/events");
+        const data = await res.json();
+
+        const listElement = document.getElementById("list");
+        if (data.length === 0) {
+            listElement.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted">Không có sự kiện nào</td></tr>`;
+            return;
+        }
+
+        listElement.innerHTML = data.map(ev => `
+            <tr class="${ev.isHidden ? 'table-light shadow-none' : ''}">
+                <td class="ps-4">
+                    <div class="fw-bold ${ev.isHidden ? 'text-muted text-decoration-line-through' : 'text-dark'}">${ev.name}</div>
+                </td>
+                <td><span class="text-muted small">${ev.location}</span></td>
+                <td class="text-center">
+                    ${ev.isHidden 
+                        ? '<span class="badge rounded-pill bg-secondary px-3">Đã ẩn</span>' 
+                        : '<span class="badge rounded-pill bg-success px-3">Đang hiện</span>'}
+                </td>
+                <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-outline-${ev.isHidden ? 'success' : 'warning'} rounded-3 me-1"
+                        onclick="toggleHide('${ev.id}')" title="${ev.isHidden ? 'Hiện lại' : 'Ẩn sự kiện'}">
+                        <i class="fas fa-${ev.isHidden ? 'eye' : 'eye-slash'}"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-outline-danger rounded-3"
+                        onclick="deleteEvent('${ev.id}')" title="Xóa vĩnh viễn">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        console.error("Lỗi:", err);
+    }
+}
+
+async function toggleHide(id) {
+    try {
+        await fetch(API + "/events/" + id + "/toggle-hide", { method: "PUT" });
+        loadEvents();
+    } catch (err) {
+        alert("Không thể thực hiện thao tác này!");
+    }
+    try {
+        const res = await fetch(API + "/events/" + id + "/toggle-hide", { method: "PUT" });
+        if (res.ok) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
+            Toast.fire({
+                icon: 'success',
+                title: 'Đã cập nhật trạng thái sự kiện'
+            });
+            loadEvents();
+        }
+    } catch (err) {
+        console.error(err);
+        Swal.fire('Lỗi!', 'Không thể kết nối máy chủ.', 'error');
+    }
+}
+
+function deleteEvent(id) {
+    Swal.fire({
+        title: 'Bạn có chắc chắn?',
+        text: "Hành động này không thể hoàn tác!",
+        icon: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Xác nhận xóa',
+        cancelButtonText: 'Hủy'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                await fetch(API + "/events/" + id, { method: "DELETE" });
+                Swal.fire({
+                    title: 'Đã xóa!',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                loadEvents();
+            } catch (err) {
+                Swal.fire('Lỗi!', 'Không thể xóa sự kiện này.', 'error');
+            }
+        }
+    });
+}
+
+window.onload = loadEvents;
+</script>
+</body>
+</html>

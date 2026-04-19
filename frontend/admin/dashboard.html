@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Quản Trị Hệ Thống</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-style.css">
+</head>
+
+<body>
+
+<div class="admin-wrapper">
+    <div class="sidebar shadow">
+        <div class="sidebar-header">
+            <h5 class="mb-0 text-white"><i class="fas fa-user-shield me-2"></i>ADMIN PANEL</h5>
+        </div>
+        <div class="py-3">
+            <a href="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="event-manager.html"><i class="fas fa-calendar-alt"></i> Quản lý sự kiện</a>
+            <a href="create-event.html"><i class="fas fa-plus-circle"></i> Tạo sự kiện mới</a>
+            <a href="participants.html"><i class="fas fa-users"></i> Người tham gia</a>
+            
+            <div class="mt-4 px-4 small text-uppercase text-muted fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">Tài khoản</div>
+            <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+            <a href="login.html" class="text-warning"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom p-3 rounded-3 shadow-sm mb-4">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" style="font-size: 1.1rem;">Hệ Thống Quản Lý / <strong>Dashboard</strong></span>
+                <div class="d-flex align-items-center">
+                    <span class="text-muted me-3">Xin chào, <strong>Admin</strong></span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D6EFD&color=fff" class="rounded-circle" width="35" alt="avatar">
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-0">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0">📊 TỔNG QUAN </h3>
+                <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="loadDashboard()">
+                    <i class="fas fa-sync-alt me-1"></i> Làm mới dữ liệu
+                </button>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="stat-card border-0 shadow-sm" style="background: linear-gradient(45deg, #4e73df, #224abe); color: white;" onclick="location.href='event-manager.html'">
+                        <h6 class="text-white-50">Tổng số sự kiện</h6>
+                        <h2 id="events" class="display-6 fw-bold">0</h2>
+                        <div class="icon-box-dash">
+                            <i class="fas fa-calendar-check fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stat-card border-0 shadow-sm" style="background: linear-gradient(45deg, #1cc88a, #13855c); color: white;" onclick="location.href='participants.html'">
+                        <h6 class="text-white-50">Người đăng ký</h6>
+                        <h2 id="participants" class="display-6 fw-bold">0</h2>
+                        <div class="icon-box-dash">
+                            <i class="fas fa-user-friends fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stat-card border-0 shadow-sm" style="background: linear-gradient(45deg, #36b9cc, #258391); color: white;" onclick="location.href='participants.html'">
+                        <h6 class="text-white-50">Đã tham gia</h6>
+                        <h2 id="checked" class="display-6 fw-bold">0</h2>
+                        <div class="icon-box-dash">
+                            <i class="fas fa-user-check fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4 g-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h5 class="fw-bold mb-3">Tỷ lệ tham gia</h5>
+                        <div class="d-flex align-items-center">
+                            <h2 id="attendance-rate" class="display-4 fw-bold text-primary mb-0">0%</h2>
+                            <p class="ms-3 text-muted mb-0">Tỷ lệ dựa trên tổng số người đăng ký và số người thực tế đã quét mã vé.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h5 class="fw-bold mb-3">Thông báo hệ thống</h5>
+                        <div class="alert alert-info border-0 rounded-3 mb-0 shadow-none">
+                            <i class="fas fa-info-circle me-2"></i> Chào mừng trở lại!</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+
+<script>
+async function loadDashboard() {
+    const eventEl = document.getElementById("events");
+    const participantEl = document.getElementById("participants");
+    const checkedEl = document.getElementById("checked");
+    const rateEl = document.getElementById("attendance-rate");
+
+    try {
+        eventEl.innerText = "...";
+        participantEl.innerText = "...";
+        checkedEl.innerText = "...";
+
+        const res = await fetch("http://localhost:3000/api/dashboard");
+        const data = await res.json();
+
+        if (data.success) {
+            eventEl.innerText = data.totalEvents || 0;
+            participantEl.innerText = data.totalParticipants || 0;
+            checkedEl.innerText = data.totalCheckedIn || 0;
+            
+            if (rateEl) {
+                rateEl.innerText = (data.attendanceRate || 0) + "%";
+            }
+        }
+    } catch (err) {
+        console.error("❌ Lỗi tải Dashboard:", err);
+        eventEl.innerText = "!";
+        participantEl.innerText = "!";
+        checkedEl.innerText = "!";
+    }
+}
+
+window.onload = loadDashboard;
+</script>
+
+<style>
+.stat-card {
+    position: relative;
+    padding: 30px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.stat-card:hover { transform: translateY(-5px); }
+.icon-box-dash {
+    background: rgba(255,255,255,0.2); 
+    color: white; 
+    border-radius: 12px; 
+    width: 50px; height: 50px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    position: absolute; 
+    right: 20px; top: 20px;
+}
+</style>
+
+</body>
+</html>

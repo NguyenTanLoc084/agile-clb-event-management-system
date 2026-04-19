@@ -1,0 +1,142 @@
+<!-- ===== SCRUM-97: SEARCH PARTICIPANTS ===== -->
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm kiếm người tham gia - Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="../assets/css/admin-style.css">
+</head>
+
+<body>
+<div class="admin-wrapper">
+    <div class="sidebar shadow">
+        <div class="sidebar-header">
+            <h5 class="mb-0 text-white"><i class="fas fa-user-shield me-2"></i>ADMIN PANEL</h5>
+        </div>
+        <div class="py-3">
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="event-manager.html"><i class="fas fa-calendar-alt"></i> Quản lý sự kiện</a>
+            <a href="create-event.html"><i class="fas fa-plus-circle"></i> Tạo sự kiện mới</a>
+            <a href="participants.html" class="active"><i class="fas fa-users"></i> Người tham gia</a>
+            <a href="student-checkin.html"><i class="fas fa-check-square"></i> Điểm danh SV</a>
+            <hr class="bg-secondary mx-3">
+            <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+            <a href="login.html" class="text-warning"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-light bg-white border-bottom mb-4 p-2 rounded-3 shadow-sm">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" style="font-size: 1.1rem;">
+                    Hệ thống / <strong id="page-title">Tìm kiếm dữ liệu</strong>
+                </span>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-0">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0">🔍 Tra cứu nhanh</h3>
+                <div class="text-muted small">Dữ liệu được cập nhật thời gian thực</div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-light border-0"><i class="fas fa-search text-primary"></i></span>
+                    <input id="search" class="form-control bg-light border-0 py-3" 
+                           placeholder="Nhập tên, email hoặc mã số để tìm kiếm..." style="font-size: 1.1rem;">
+                </div>
+                <div id="search-info" class="mt-2 ms-2 small text-muted">Vui lòng nhập từ khóa để bắt đầu...</div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-4">Họ và Tên</th>
+                                <th>Email liên hệ</th>
+                                <th>Sự kiện</th>
+                                <th class="text-center">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+
+<script>
+let participants = [];
+const searchInput = document.getElementById("search");
+const listElement = document.getElementById("list");
+const infoElement = document.getElementById("search-info");
+
+async function loadData() {
+    try {
+        const res = await fetch("http://localhost:3000/api/participants");
+        participants = await res.json();
+        infoElement.innerText = `Đã sẵn sàng tìm kiếm trên ${participants.length} người tham gia.`;
+    } catch (err) {
+        console.error("Lỗi kết nối:", err);
+        infoElement.innerHTML = `<span class="text-danger">❌ Không thể kết nối tới server!</span>`;
+    }
+}
+
+function renderResults(filtered) {
+    if (filtered.length === 0) {
+        listElement.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted">Không tìm thấy kết quả phù hợp</td></tr>`;
+        return;
+    }
+
+    listElement.innerHTML = filtered.map(p => `
+        <tr>
+            <td class="ps-4">
+                <div class="fw-bold text-dark">${p.name}</div>
+            </td>
+            <td><span class="text-muted small">${p.email}</span></td>
+            <td><span class="badge bg-light text-primary border border-primary-subtle px-2">${p.event || 'Sự kiện chung'}</span></td>
+            <td class="text-center">
+                ${p.checkedIn 
+                    ? '<span class="badge rounded-pill bg-success-subtle text-success border border-success px-3"><i class="fas fa-check me-1"></i> Đã tham gia</span>' 
+                    : '<span class="badge rounded-pill bg-light text-muted border px-3">Chưa điểm danh</span>'}
+            </td>
+        </tr>
+    `).join('');
+}
+
+searchInput.addEventListener("input", () => {
+    const keyword = searchInput.value.trim().toLowerCase();
+    
+    if (keyword === "") {
+        listElement.innerHTML = ""; 
+        infoElement.innerText = "Vui lòng nhập từ khóa...";
+        return;
+    }
+
+    const filtered = participants.filter(p =>
+        p.name.toLowerCase().includes(keyword) ||
+        p.email.toLowerCase().includes(keyword)
+    );
+
+    infoElement.innerText = `Tìm thấy ${filtered.length} kết quả.`;
+    renderResults(filtered);
+});
+
+window.onload = loadData;
+</script>
+
+</body>
+</html>

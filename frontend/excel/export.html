@@ -1,0 +1,116 @@
+<!-- ===== SCRUM-30: EXPORT EXCEL (CSV) ===== -->
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xuất dữ liệu - Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="../assets/css/admin-style.css">
+</head>
+
+<body>
+<div class="admin-wrapper">
+    <div class="sidebar shadow">
+        <div class="sidebar-header">
+            <h5 class="mb-0 text-white"><i class="fas fa-user-shield me-2"></i>ADMIN PANEL</h5>
+        </div>
+        <div class="py-3">
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="event-manager.html"><i class="fas fa-calendar-alt"></i> Quản lý sự kiện</a>
+            <a href="create-event.html"><i class="fas fa-plus-circle"></i> Tạo sự kiện mới</a>
+            <a href="participants.html"><i class="fas fa-users"></i> Người tham gia</a>
+            <a href="student-checkin.html"><i class="fas fa-check-square"></i> Điểm danh SV</a>
+            <hr class="bg-secondary mx-3">
+            <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+            <a href="login.html" class="text-warning"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-light bg-white border-bottom mb-4 p-2 rounded-3 shadow-sm">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" style="font-size: 1.1rem;">
+                    Hệ thống / <strong id="page-title">Xuất báo cáo</strong>
+                </span>
+            </div>
+        </nav>
+
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 text-center">
+                <div class="card shadow-sm border-0 p-5 rounded-4 bg-white">
+                    <div class="bg-light-success d-inline-block p-4 rounded-circle mb-4" style="background-color: #e7f9f7;">
+                        <i class="fas fa-file-excel fa-3x text-success"></i>
+                    </div>
+                    
+                    <h3 class="fw-bold">Xuất danh sách người tham gia</h3>
+                    <p class="text-muted mb-4">Dữ liệu sẽ được trích xuất từ hệ thống và tải xuống máy tính của bạn dưới định dạng CSV (tương thích hoàn toàn với Microsoft Excel).</p>
+
+                    <div class="alert alert-info border-0 small mb-4">
+                        <i class="fas fa-info-circle me-2"></i> File xuất ra bao gồm: Họ tên, Email, Tên sự kiện và Trạng thái điểm danh.
+                    </div>
+
+                    <button id="btn-export" class="btn btn-success btn-lg w-100 py-3 fw-bold rounded-3 shadow-sm" onclick="exportCSV()">
+                        <i class="fas fa-download me-2"></i> Bắt đầu xuất Excel (.csv)
+                    </button>
+
+                    <div id="status" class="mt-3 small text-muted d-none">
+                        <i class="fas fa-spinner fa-spin me-1"></i> Đang chuẩn bị dữ liệu...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+
+<script>
+async function exportCSV() {
+    const btn = document.getElementById("btn-export");
+    const status = document.getElementById("status");
+
+    try {
+        btn.disabled = true;
+        status.classList.remove("d-none");
+
+        const res = await fetch("http://localhost:3000/api/participants");
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+            alert("Không có dữ liệu để xuất!");
+            return;
+        }
+        let csv = "\ufeffName,Email,Event,CheckedIn\n";
+
+        data.forEach(p => {
+            csv += `"${p.name}","${p.email}","${p.event || ''}","${p.checkedIn ? 'Đã tham gia' : 'Vắng'}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `participants_report_${new Date().toLocaleDateString('vi-VN')}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+        console.error("Lỗi xuất file:", err);
+        alert("Có lỗi xảy ra khi kết nối máy chủ!");
+    } finally {
+        btn.disabled = false;
+        status.classList.add("d-none");
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+[
+  {
+    "username": "admin",
+    "password": "123456",
+    "email": "agileteam782@gmail.com",
+    "role": "superadmin",
+    "lastLogin": ""
+  }
+]
