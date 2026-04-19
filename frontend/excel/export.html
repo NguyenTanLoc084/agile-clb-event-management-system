@@ -79,7 +79,7 @@ async function exportCSV() {
         btn.disabled = true;
         status.classList.remove("d-none");
 
-        const res = await fetch("http://localhost:3000/api/participants");
+        const res = await fetch("/api/participants");
         const data = await res.json();
 
         if (!data || data.length === 0) {
