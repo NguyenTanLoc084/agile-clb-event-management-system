@@ -112,7 +112,7 @@ async function check() {
     try {
         btn.disabled = true;
         updateMsg("⏳ Đang xử lý...", "text-muted");
-        const res = await fetch("http://localhost:3000/api/checkin/check-ticket", {
+        const res = await fetch("/api/checkin/check-ticket", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ code })
